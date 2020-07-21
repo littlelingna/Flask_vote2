@@ -16,7 +16,6 @@ def page_not_found(error):
 
 @main.route('/')
 def index():
-    print("测试git")
     # posts=Post.query.all()
 
     # page_index = request.args.get('page', 1, type=int)
