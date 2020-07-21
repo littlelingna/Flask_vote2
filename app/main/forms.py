@@ -43,8 +43,11 @@ class userGiveToActionForm(FlaskForm):
         (u'其他（需备注明确内容）', u'其他（需备注明确内容）')
     ] , validators=[DataRequired()] )
     ReasonText = TextAreaField("赠予理由详情，其他类型时必填")
-    submit = SubmitField("提交操作")
+    submit1 = SubmitField("提交操作")
 
+class userGiveToLeaderForm(FlaskForm):
+    # 回收Aero币
+    submit2 = SubmitField(label="回收Aero币")
 
 class ChangePasswordForm(FlaskForm):
     old_password = PasswordField(u'原始password', validators=[DataRequired()])
