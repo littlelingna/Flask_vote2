@@ -22,6 +22,14 @@ class Action(db.Model):
     #     db.session.add_all(map(lambda r: Action(name=r), ['Guests', 'Administrators']))
     #     db.session.commit()
 
+class Turnover(db.Model):
+    __tablename__ = 'aeroturnover'
+    TurnoverId = db.Column(db.Integer,primary_key=True,autoincrement=True)
+    FromUser = db.Column(db.String)
+    directLeader = db.Column(db.String)
+    AeroCoin_Num = db.Column(db.Integer)
+    TurnoverTime = db.Column(db.DateTime, default=datetime.now,onupdate=datetime.now)
+
 
 class User(UserMixin, db.Model):
     __tablename__ = 'user'
@@ -77,6 +85,7 @@ class Assign(db.Model):
     username = db.Column(db.String)
     AeroCoin_lefted = db.Column(db.Integer)
     AeroCoin_givetoLeader = db.Column(db.Integer)
+    AeroCoin_fromuser = db.Column(db.Integer)
     AeroCoin_received = db.Column(db.Integer)
     AeroCoin_type = db.Column(db.String)
     # created = db.Column(db.DateTime, index=True, default=datetime.utcnow)
@@ -91,4 +100,12 @@ class Ranking(db.Model):
     AeroCoin_givetoLeader = db.Column(db.Integer)
     AeroCoin_received = db.Column(db.Integer)
     ActionPreiod = db.Column(db.String)
+
+class Department(db.Model):
+    __tablename__ = 'department'
+    DeptId = db.Column(db.Integer,primary_key=True)
+    Deptname = db.Column(db.String)
+    DeptLeader = db.Column(db.String)
+    ParentDeptId = db.Column(db.Integer)
+    Note = db.Column(db.String)
 

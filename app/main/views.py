@@ -3,10 +3,10 @@
 from flask import render_template, request, flash, redirect, url_for, current_app, abort
 from . import main
 from .. import db
-from ..models import Action, Assign, User, Ranking
+from ..models import Action, Assign, User, Ranking, Department, Turnover
 from flask_login import login_required, current_user
 
-from .forms import userGiveToActionForm, ChangePasswordForm, UserRankingqueryForm
+from .forms import userGiveToActionForm, userGiveToLeaderForm, ChangePasswordForm, UserRankingqueryForm
 
 
 @main.errorhandler(404)
@@ -16,7 +16,6 @@ def page_not_found(error):
 
 @main.route('/')
 def index():
-    print("测试git")
     # posts=Post.query.all()
 
     # page_index = request.args.get('page', 1, type=int)
@@ -43,27 +42,28 @@ def userhome():
     if request.method == 'POST':
         # pass
         #####  从 usergivetoAction form 读取赠予操作。 但是还要get到 提交的记录显示到 列表里
-        form = userGiveToActionForm()
+        form1 = userGiveToActionForm()
+        form2 = userGiveToLeaderForm()
 
-        if form.validate_on_submit():
+        if form1.submit1.data and form1.validate():
 
-            print("------------give to user--", dict(form.ToUser.choices).get(form.ToUser.data))
+            print("------------give to user--", dict(form1.ToUser.choices).get(form1.ToUser.data))
             #### 执行投币后当前user需要从assign扣除AeroCoinLefted
             fromUserLefted = Assign.query.filter_by(username=current_user.username).first_or_404()
 
             print("--------------for now left", fromUserLefted.AeroCoin_lefted)
-            print("-------------will give ", form.AeroCoinNum._value(), " coins")
-            if int(form.AeroCoinNum._value()) <= int(fromUserLefted.AeroCoin_lefted):
+            print("-------------will give ", form1.AeroCoinNum._value(), " coins")
+            if int(form1.AeroCoinNum._value()) <= int(fromUserLefted.AeroCoin_lefted):
                 #######  从Form表单获取存入数据库的字段
                 userGiveToAction = Action(FromUser=current_user.username,
-                                          ToUser=dict(form.ToUser.choices).get(form.ToUser.data),
-                                          AeroCoin_type=dict(form.AeroCoinType.choices).get(form.AeroCoinType.data),
-                                          AeroCoin_Num=form.AeroCoinNum._value(),
-                                          Reason=dict(form.Reasonlist.choices).get(form.Reasonlist.data),
-                                          ReasonNote=form.ReasonText.data
+                                          ToUser=dict(form1.ToUser.choices).get(form1.ToUser.data),
+                                          AeroCoin_type=dict(form1.AeroCoinType.choices).get(form1.AeroCoinType.data),
+                                          AeroCoin_Num=form1.AeroCoinNum._value(),
+                                          Reason=dict(form1.Reasonlist.choices).get(form1.Reasonlist.data),
+                                          ReasonNote=form1.ReasonText.data
                                           )
                 #### 因为提示 translate 问题，debug字段信息
-                if current_user.username == dict(form.ToUser.choices).get(form.ToUser.data):
+                if current_user.username == dict(form1.ToUser.choices).get(form1.ToUser.data):
                     print("-----POST--- 自己给自己投币判断---")
                     flash("赠予者与赠予对象不能相同。")
                     return redirect(url_for('main.userhome'))
@@ -75,25 +75,58 @@ def userhome():
                 # fromUserLefted.update({"AeroCoin_lefted": int(AeroCoin_lefted - AeroCoin_Num)})
                 # ----update用来批量更新，因为assign表username是唯一的 ,故不需要
                 Assign.query.filter_by(username=current_user.username) \
-                    .update({"AeroCoin_lefted": int(fromUserLefted.AeroCoin_lefted) - int(form.AeroCoinNum._value())})
+                    .update({"AeroCoin_lefted": int(fromUserLefted.AeroCoin_lefted) - int(form1.AeroCoinNum._value())})
                 #######--- 需要给投币的ToUser添加AeroCoin_Received
-                toUser = dict(form.ToUser.choices).get(form.ToUser.data)
+                toUser = dict(form1.ToUser.choices).get(form1.ToUser.data)
                 toUserReceieved = Assign.query.filter_by(username=toUser).first_or_404()
                 Assign.query.filter_by(username=toUser). \
                     update(
-                    {"AeroCoin_received": int(toUserReceieved.AeroCoin_received) + int(form.AeroCoinNum._value())})
+                    {"AeroCoin_received": int(toUserReceieved.AeroCoin_received) + int(form1.AeroCoinNum._value())})
+                db.session.commit()
+            else:
+                print("-----POST--- 余额不足---")
+                flash("Aero币余额不足")
+                db.session.rollback()
+        if form2.submit2.data and form2.validate():
+
+            #### 执行投币后当前user需要从assign扣除AeroCoinLefted,添加AeroCoinGivetoLeader
+            fromUserAssign = Assign.query.filter_by(username=current_user.username).first_or_404()
+            fromUser = User.query.filter_by(username=current_user.username).first_or_404()
+            fromLeaderAssign = Assign.query.filter_by(username=fromUser.directLeader).first_or_404()
+
+            print("--------------for now left", fromUserAssign.AeroCoin_lefted)
+            print("--------------for now give to leader", fromUserAssign.AeroCoin_givetoLeader)
+            print("--------------leader", fromUser.directLeader)
+            print("--------------Leader for now left", fromLeaderAssign.AeroCoin_lefted)
+            print("-------------will give to leader", fromUserAssign.AeroCoin_lefted, " coins")
+            if int(fromUserAssign.AeroCoin_lefted) > 0:
+                userTurnover = Turnover(FromUser=current_user.username,
+                                        directLeader=fromUser.directLeader,
+                                        AeroCoin_Num=fromUserAssign.AeroCoin_lefted
+                                        )
+                db.session.add(userTurnover)
+                Assign.query.filter_by(username=fromUser.directLeader). \
+                    update({"AeroCoin_lefted": int(fromLeaderAssign.AeroCoin_lefted) +
+                                               int(fromUserAssign.AeroCoin_lefted),
+                            "AeroCoin_fromuser": int(
+                                fromUserAssign.AeroCoin_lefted) + fromLeaderAssign.AeroCoin_fromuser})
+                Assign.query.filter_by(username=current_user.username) \
+                    .update(
+                    {"AeroCoin_lefted": 0,
+                     "AeroCoin_givetoLeader": int(fromUserAssign.AeroCoin_lefted)})
+                #######--- 需要给Leader添加AeroCoin_lefted
                 db.session.commit()
             else:
                 print("-----POST--- 余额不足---")
                 flash("Aero币余额不足")
                 db.session.rollback()
 
-            # ToUser=dict(form.ToUser.choices).get(form.ToUser.data)
-            # toUserReceived = Assign.query.filter_by(username=ToUser).first_or_404()
-            # toUserReceived.update({models.Assign.AeroCoin_received:int(AeroCoin_received + AeroCoin_Num)})
+        # ToUser=dict(form.ToUser.choices).get(form.ToUser.data)
+        # toUserReceived = Assign.query.filter_by(username=ToUser).first_or_404()
+        # toUserReceived.update({models.Assign.AeroCoin_received:int(AeroCoin_received + AeroCoin_Num)})
 
-            # db.session.add(userGiveToAction)
-            # db.session.commit()
+        # db.session.add(userGiveToAction)
+        # db.session.commit()
 
         ########### 提交记录后需要重新读取, 但使用redirect后就可以不用重复GET #####
         # userGiveToRecords=db.session.query(Action.FromUser,Action.ToUser,Action.AeroCoin_type,
@@ -112,7 +145,8 @@ def userhome():
 
     if request.method == 'GET':
         # pass
-        form = userGiveToActionForm()
+        form1 = userGiveToActionForm()
+        form2 = userGiveToLeaderForm()
         print("--GET----current_user----", current_user.username)
         # userGiveToRecords=Action.query().filter_by(FromUser=current_user.username).all()
         ###----  使用session查询可以批量制定字段
@@ -124,14 +158,22 @@ def userhome():
             username=current_user.username).first()
         AeroCoinLefted = Assign.query.with_entities(Assign.AeroCoin_lefted).filter_by(
             username=current_user.username).first()
+        AeroCoinFromuser = Assign.query.with_entities(Assign.AeroCoin_fromuser).filter_by(
+            username=current_user.username).first()
+        Leader = Department.query.with_entities(Department.DeptLeader).all()
+        # print("部门领导",Leader)
+        sign = False
+        for leader in Leader:
+            if current_user.username == leader[0]:
+                sign = True
         db.session.commit()
         ###---debug--
         print("---GET---------userGiveToRecords----", userGiveToRecords)
         print("---GET-----AeroCoinReceived-----", AeroCoinReceived)
         print("---GET---------AeroCoinLefted------", AeroCoinLefted)
-        return render_template('userhome.html', form=form, GivetoRecords=userGiveToRecords,
-                               AeroCoinLefted=AeroCoinLefted,
-                               AeroCoinReceived=AeroCoinReceived, title=u'用户首页')
+        return render_template('userhome.html', form1=form1, form2=form2, GivetoRecords=userGiveToRecords,
+                               AeroCoinLefted=AeroCoinLefted, AeroCoinFromuser=AeroCoinFromuser,
+                               AeroCoinReceived=AeroCoinReceived, sign=sign, title=u'用户首页')
 
 
 # @main.route("/userhome/<username>", methods=['GET', 'POST'])
