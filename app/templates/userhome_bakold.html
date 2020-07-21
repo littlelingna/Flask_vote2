@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% block navbar %}
+    {# { nav.top.render() }} #}
+    {% include 'includes/_usernavbar.html' %}
+{% endblock %}
+{% from "bootstrap/pagination.html" import render_pagination %}
+
+{% block page_body %}
+    {{ super() }}
+{#    <div class="container">#}
+{#        <a href="{{ url_for('auth.login') }}" class="btn btn-primary">用户登录</a>#}
+{#    </div>#}
+ <div class="container">
+     用户：{{ username }} 当前剩余Aero币有 {{ AeroCoinLefted }}  <a  class="btn btn-primary">上交剩余Aero币</a>
+    </div>
+    <div>
+<h3> 赠予记录 </h3>
+     <table class="table table-striped custom-table " border="1">
+
+  <tr>
+
+	<th> 赠予者 </th>
+	<th> 赠予对象 </th>
+    <th> Areo币类型 </th>
+    <th> Areo币数量 </th>
+    <th> 日 期</th>
+    <th> 理 由 </th>
+
+        {% for test in givenlistdata %}
+          <tr>
+
+            <td>{{ test[1] }}</td>
+            <td>{{ test[2] }}</td>
+            <td>{{ test[3] }}</td>
+            <td>{{ test[4] }}</td>
+            <td>{{ test[5] }}</td>
+            <td>{{ test[6] }}</td>
+
+{#              <td>#}
+{#                  <a href="{{ url_for('admin.mysqldelete',uid=test[0]) }}">删除</a>#}
+{#                  <a href="{{ url_for('admin.mysqlmodify',uid=test[0]) }}">修改</a>#}
+{#              </td>#}
+          </tr>
+        {% endfor %}
+    </table>
+    </div>
+
+    <div class="container">
+{#       在用户首页通常显示用户投币的记录，一个table显示，然后是投币的操作form， 还需要添加回收aero币的按钮  }#}
+<div   class="form-horizontal" >
+<h3>Aero币赠予</h3>
+    <form action="/user/{{ username }}" method="POST">
+
+ <label>受赠人员</label> <select name="GiveTo">
+
+<option value="5">  焦函   </option>
+<option value="6">  王亚伟 </option>
+<option value="7">  山丹   </option>
+<option value="8">  武卫文 </option>
+<option value="9">  王鑫龙 </option>
+<option value="10"> 李纪念 </option>
+<option value="2">  张煜刚 </option>
+<option value="11"> 张梦巧 </option>
+<option value="12"> 章俊伟 </option>
+<option value="13"> 范宇   </option>
+<option value="3">  滕一   </option>
+<option value="14"> 王诗情  </option>
+</select>
+{#        <br>#}
+{# <label> 选择 </label>#}
+{#        <input type="radio" name="coinType" value="Ccoin" checked> C币#}
+{#        <input type="radio" name="coinType" value="Tcoin"> T币#}
+{#        <br>#}
+       <br>
+        <label>Aero币种类</label> <select name="AeroCoin_type">
+
+<option value="0">  Aero币  </option> </select>
+    <br>
+        <label> 数量 </label>
+        <input type = "text" name ="coinnumber">  &nbsp;&nbsp;&nbsp; {{NotAllowActionmsg}}<br>
+<label>赠予理由</label><br>
+
+         <select name="reasonlist">
+
+<option value="1">  取得阶段性成果或完成标志性工作   </option>
+<option value="2">  对个人或组织影响力较大正向提 </option>
+<option value="3">  获得公司及以上级表彰奖励   </option>
+<option value="4">  管理类创新产生实效 </option>
+<option value="5">  技术类创新产生实效 </option>
+<option value="6">  承受较大工作强度和压力 </option>
+<option value="7">  其他（需备注明确内容） </option>
+</select>
+        <br>
+
+
+        <label>理由详情</label><br>
+        <textarea name="reason" rows="10" cols="70"></textarea>
+      <br>
+      <input type="submit" onclick="alert('提交成功，请点击刷新')"  value="提交">
+    </form>
+        </form>
+    </div>
+
+    <br>
+    <br>
+{% endblock page_body %}
+<p>
+

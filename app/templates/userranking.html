@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+{% block navbar %}
+    {# { nav.top.render() }} #}
+    {% include 'includes/_usernavbar.html' %}
+{% endblock %}
+{% from "bootstrap/pagination.html" import render_pagination %}
+
+{% block page_body %}
+    <div class="container">
+         {{ wtf.quick_form(form) }}
+    </div>
+    <div class="container">
+{# 用户ranking是提供查询历届aero币排名的信息， 只需要一个table即可 #}
+{####### --- todo 添加rankinghistory的查询结果table        #}
+
+    </div>
+    <div class="container">
+    <h3> 优秀员工排名 </h3>
+  <table class="table table-striped"   width="40%"  border="1">
+    <tr>
+{#        <th> 排名 </th>#}
+        <th> 名称 </th>
+        <th> Areo币数量 </th>
+        <th> 月度 </th>
+    </tr>
+        {% for record in rankingquery  %}
+           <tr>
+{#             <td> {{ i }} </td>#}
+             <td> {{ record[0] }} </td>
+             <td> {{ record[1] }} </td>
+             <td> {{ record[2] }} </td>
+           </tr>
+        {% endfor %}
+    </table>
+    </div>
+{% endblock page_body %}
+
+
