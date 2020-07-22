@@ -23,7 +23,7 @@ class Action(db.Model):
     #     db.session.commit()
 
 class Turnover(db.Model):
-    __tablename__ = 'aeroturnover'
+    __tablename__ = 'actionturnover'
     TurnoverId = db.Column(db.Integer,primary_key=True,autoincrement=True)
     FromUser = db.Column(db.String)
     directLeader = db.Column(db.String)
