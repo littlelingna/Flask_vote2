@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+{% block navbar %}
+    {# { nav.top.render() }} #}
+    {% include 'includes/_adminnavbar.html' %}
+{% endblock %}
+{% from "bootstrap/pagination.html" import render_pagination %}
+
+{% for message in get_flashed_messages() %}
+    <div class="alert alert-warning">
+        <button type="button" class="close" data-dismiss="alert">×</button>
+        {{ message }}
+    </div>
+{% endfor %}
+
+{% block page_body %}
+    {{ super() }}
+    <div class="container">
+        {% if current_user.is_authenticated %}
+            <h3>您好 : {{ current_user.username }}</h3>
+        {% endif %}
+    </div>
+    <div class="container">
+        <div class="table-responsive">
+            <h3>
+                部门列表
+                <input type="button" class="btn btn-large btn-primary" value="新增部门"
+                       data-toggle="modal" data-target="#add" style="float: right;margin-right: 40px;margin-bottom: 20px"
+                       onclick="goSubmit()">
+            </h3>
+            <table class="table table-striped custom-table" width="60%" border="1">
+                <tr>
+                    <th> 部门名称</th>
+                    <th> 部门主管</th>
+                    <th> 直属上级</th>
+                    <th> 编 辑</th>
+                </tr>
+                {% for dept in DepartmentList %}
+                    <tr>
+                        {% if dept[0]!=None %}
+                            <td> {{ dept[0] }} </td>
+                        {% else %}
+                            <td></td>
+                        {% endif %}
+                        {% if dept[1]!=None %}
+                            <td> {{ dept[1] }} </td>
+                        {% else %}
+                            <td></td>
+                        {% endif %}
+                        <td></td>
+                        <td>
+                            <button type="button" class="btn  btn-success btn-sm" data-toggle="modal"
+                                    data-target="#modify"
+                                    onclick="goModify('')">修改
+                            </button>
+                            <button type="button" class="btn  btn-danger btn-sm" data-toggle="modal"
+                                    data-target="#delete"
+                                    onclick="goDelete('')">删除
+                            </button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+    <div class="container">
+        <div class="table-responsive">
+            <h3>
+                员工分配列表
+                <input type="button" class="btn btn-large btn-primary" value="新增角色"
+                       data-toggle="modal" data-target="#add" style="float: right;margin-right: 40px;margin-bottom: 20px"
+                       onclick="goSubmit()">
+            </h3>
+            <table class="table table-striped custom-table" width="60%" border="1">
+                <tr>
+                    <th> 用户角色</th>
+                    <th> 初始化币种</th>
+                    <th> 分配数量</th>
+                    <th> 编 辑</th>
+                </tr>
+                {% for role in RoleList %}
+                    <tr>
+                        {% if role[0]!=None %}
+                            <td> {{ role[0] }} </td>
+                        {% else %}
+                            <td></td>
+                        {% endif %}
+                        {% if role[1]!=None %}
+                            <td> {{ role[1] }} </td>
+                        {% else %}
+                            <td></td>
+                        {% endif %}
+                        {% if role[2]!=None %}
+                            <td> {{ role[2] }} </td>
+                        {% else %}
+                            <td></td>
+                        {% endif %}
+                        <td>
+                            <button type="button" class="btn  btn-success btn-sm" data-toggle="modal"
+                                    data-target="#modify"
+                                    onclick="goModify('')">修改
+                            </button>
+                            <button type="button" class="btn  btn-danger btn-sm" data-toggle="modal"
+                                    data-target="#delete"
+                                    onclick="goDelete('')">删除
+                            </button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+    <div class="container">
+        <div class="table-responsive">
+            <h3>
+                赠予理由列表
+                <input type="button" class="btn btn-large btn-primary" value="新增理由"
+                       data-toggle="modal" data-target="#add" style="float: right;margin-right: 40px;margin-bottom: 20px"
+                       onclick="goSubmit()">
+            </h3>
+            <table class="table table-striped custom-table" width="60%" border="1">
+                <tr>
+                    <th> 理由</th>
+                    <th> 编 辑</th>
+                </tr>
+                {% for reason in ReasonList %}
+                    <tr>
+                        {% if reason[0]!=None %}
+                            <td> {{ reason[0] }} </td>
+                        {% else %}
+                            <td></td>
+                        {% endif %}
+                        <td>
+                            <button type="button" class="btn  btn-success btn-sm" data-toggle="modal"
+                                    data-target="#modify"
+                                    onclick="goModify('')">修改
+                            </button>
+                            <button type="button" class="btn  btn-danger btn-sm" data-toggle="modal"
+                                    data-target="#delete"
+                                    onclick="goDelete('')">删除
+                            </button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+
+
+{% endblock page_body %}
+
+

@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+{% block navbar %}
+    {# { nav.top.render() }} #}
+    {% include 'includes/_adminnavbar.html' %}
+{% endblock %}
+{% from "bootstrap/pagination.html" import render_pagination %}
+
+{% for message in get_flashed_messages() %}
+    <div class="alert alert-warning">
+        <button type="button" class="close" data-dismiss="alert">×</button>
+        {{ message }}
+    </div>
+{% endfor %}
+
+{% block page_body %}
+    {{ super() }}
+
+    <div class="container">
+        {% if current_user.is_authenticated %}
+            <h3>您好 : {{ current_user.username }}</h3>
+            <h4> 当前赠予记录有 <a>{{ AeroCoinActionNum }} </a>个&nbsp;&nbsp;&nbsp;&nbsp;当前回收记录有
+                <a>{{ AeroCoinTurnoverNum }} </a>个<br>
+                Aero币总数共有 <a>{{ AeroCoinNum }} </a>枚&nbsp;&nbsp;Aero币整体剩余 <a>{{ AeroCoinLeftNum }} </a>枚
+            </h4>
+            {% for message in get_flashed_messages() %}
+                <div class="alert-info"> {{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div class="container">
+        <div class="table-responsive">
+            <h3>
+                员工列表
+                <input type="button" class="btn btn-large btn-primary" value="新增用户"
+                       data-toggle="modal" data-target="#add" style="float: right;margin-right: 40px;margin-bottom: 20px"
+                       onclick="goSubmit()">
+            </h3>
+            <table class="table table-striped custom-table" width="60%" border="1">
+                <tr>
+                    <th> 用户姓名</th>
+                    <th> 用户角色</th>
+                    <th> 初始化币种</th>
+                    <th> 分配数量</th>
+                    <th> 创建时间</th>
+                    <th> 上级主管</th>
+                    <th> 编 辑</th>
+                </tr>
+                {% for user in UserList |sort(attribute='employee_date',reverse=True ) %}
+                    <tr>
+                        {% if user[0]!=None %}
+                            <td> {{ user[0] }} </td>
+                        {% else %}
+                            <td></td>
+                        {% endif %}
+                        {% if user[1]!=None %}
+                            <td> {{ user[1] }} </td>
+                        {% else %}
+                            <td></td>
+                        {% endif %}
+                        {% if user[2]!=None %}
+                            <td> {{ user[2] }} </td>
+                        {% else %}
+                            <td></td>
+                        {% endif %}
+                        {% if user[3]!=None %}
+                            <td> {{ user[3] }} </td>
+                        {% else %}
+                            <td></td>
+                        {% endif %}
+                        {% if user[4]!=None %}
+                            <td> {{ user[4] }} </td>
+                        {% else %}
+                            <td></td>
+                        {% endif %}
+                        {% if user[5]!=None %}
+                            <td> {{ user[5] }} </td>
+                        {% else %}
+                            <td></td>
+                        {% endif %}
+                        <td>
+                            <button type="button" class="btn  btn-success btn-sm" data-toggle="modal"
+                                    data-target="#modify"
+                                    onclick="goModify('')">修改
+                            </button>
+                            <button type="button" class="btn  btn-danger btn-sm" data-toggle="modal"
+                                    data-target="#delete"
+                                    onclick="goDelete('')">删除
+                            </button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+
+
+{% endblock page_body %}
+
+

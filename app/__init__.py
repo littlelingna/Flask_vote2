@@ -37,9 +37,11 @@ def create_app(config_name):
 ## 注册blueprint
     from .auth import auth as auth_blueprint
     from .main import main as main_blueprint
+    from .admin import admin as admin_blueprint
 
     app.register_blueprint(auth_blueprint, url_prefix='/auth')
     app.register_blueprint(main_blueprint, static_folder='static')
+    app.register_blueprint(admin_blueprint, static_folder='static')
 
 
     # config[config_name].init_app(app)
@@ -48,7 +50,7 @@ def create_app(config_name):
     # moment.init_app(app)
 
 #临时添加db config
-    app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:cf123456@127.0.0.1:3306/aero?charset=utf8"
+    app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:123456@127.0.0.1:3306/aero?charset=utf8"
     app.config["SQLALCHEMY_POOL_SIZE"] = 5    # SQLAlchemy的连接池大小
     app.config["SQLALCHEMY_POOL_TIMEOUT"] = 15   # SQLAlchemy的连接超时时间
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False

@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+{% block navbar %}
+    {# { nav.top.render() }} #}
+    {% include 'includes/_adminnavbar.html' %}
+{% endblock %}
+{% from "bootstrap/pagination.html" import render_pagination %}
+
+{% for message in get_flashed_messages() %}
+    <div class="alert alert-warning">
+        <button type="button" class="close" data-dismiss="alert">×</button>
+        {{ message }}
+    </div>
+{% endfor %}
+
+{% block page_body %}
+    {{ super() }}
+    <div class="container">
+        {% if current_user.is_authenticated %}
+            <h3>您好 : {{ current_user.username }}</h3>
+            <h4> 目前 <a>2020年***季度 </a><br>赠予记录有<a>{{ AeroCoinActionNum }} </a>个 ，
+                赠予Aero币 <a>{{ AeroCoinNum }} </a>枚 ， 剩余Aero币 <a>{{ AeroCoinLeftNum }} </a>枚
+            </h4>
+            {% for message in get_flashed_messages() %}
+                <div class="alert-info"> {{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div class="container">
+        <div class="table-responsive">
+            <h3>
+                赠予操作记录清单
+            </h3>
+            <table class="table table-striped custom-table" width="60%" border="1">
+                <tr>
+                    <th>序号</th>
+                    <th> 赠予方</th>
+                    <th> 获赠方</th>
+                    <th> Aero币种类</th>
+                    <th> Aero币数量</th>
+                    <th> 获赠理由</th>
+                    <th> 赠予时间</th>
+                    <th> 统计月度</th>
+                </tr>
+                <script>i = 1</script>
+                {% for action in ActionList |sort(attribute='ActionTime',reverse=True ) %}
+                    <tr>
+                        <td>
+                            <script>document.write(i);
+                            i++</script>
+                        </td>
+                        {% if action[0]!=None %}
+                            <td> {{ action[0] }} </td>
+                        {% else %}
+                            <td></td>
+                        {% endif %}
+                        {% if action[1]!=None %}
+                            <td> {{ action[1] }} </td>
+                        {% else %}
+                            <td></td>
+                        {% endif %}
+                        {% if action[2]!=None %}
+                            <td> {{ action[2] }} </td>
+                        {% else %}
+                            <td></td>
+                        {% endif %}
+                        {% if action[3]!=None %}
+                            <td> {{ action[3] }} </td>
+                        {% else %}
+                            <td></td>
+                        {% endif %}
+                        {% if action[4]!=None %}
+                            <td> {{ action[4] }} </td>
+                        {% else %}
+                            <td></td>
+                        {% endif %}
+                        {% if action[5]!=None %}
+                            <td> {{ action[5] }} </td>
+                        {% else %}
+                            <td></td>
+                        {% endif %}
+                        {% if action[6]!=None %}
+                            <td> {{ action[6] }} </td>
+                        {% else %}
+                            <td></td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+
+
+{% endblock page_body %}
+
+
