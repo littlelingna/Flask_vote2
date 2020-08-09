@@ -13,8 +13,12 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data, password=form.password.data).first()
         if user is not None:
-            login_user(user)
-            return redirect(url_for('main.userhome'))
+            if user.username == 'admin':
+                login_user(user)
+                return redirect(url_for('admin.adminhome'))
+            else:
+                login_user(user)
+                return redirect(url_for('main.userhome'))
         else:
             flash('用户名或密码错误.')
 

@@ -15,6 +15,7 @@ class Action(db.Model):
     ReasonNote = db.Column(db.String)
     ActionTime = db.Column(db.DateTime, default=datetime.now,onupdate=datetime.now)
     remark = db.Column(db.String)
+    ActionPreiod = db.Column(db.String)
     # users = db.relationship('User', backref='role')
 
     # @staticmethod
@@ -41,6 +42,7 @@ class User(UserMixin, db.Model):
     directLeader = db.Column(db.String)
     AeroCoin_type = db.Column(db.String)
     AeroCoin_Num = db.Column(db.Integer)
+    employee_date = db.Column(db.Date)
 
 #以为报错 NotImplementedError('No `id` attribute - override `get_id`')，所以override get_id方法
     def get_id(self):
@@ -109,3 +111,14 @@ class Department(db.Model):
     ParentDeptId = db.Column(db.Integer)
     Note = db.Column(db.String)
 
+class Role(db.Model):
+    __tablename__ = 'role'
+    RoleId = db.Column(db.Integer,primary_key=True)
+    Rolename = db.Column(db.String)
+    AeroCoin_type = db.Column(db.String)
+    AeroCoin_num = db.Column(db.Integer)
+
+class Reason(db.Model):
+    __tablename__ = 'actionreason'
+    ReasonId = db.Column(db.Integer,primary_key=True)
+    ReasonText = db.Column(db.String)

@@ -1,0 +1,39 @@
+<nav class="navbar navbar-default navbar-static-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button aria-controls="navbar"
+                    aria-expanded="false"
+                    class="navbar-toggle collapsed"
+                    data-target="#7bc75dbef69e41ff2452de70079c8ece1320ea7c"
+                    data-toggle="collapse" type="button">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <span class="navbar-brand">Aero币管理</span>
+        </div>
+        <div class="navbar-collapse collapse"
+             id="7bc75dbef69e41ff2452de70079c8ece1320ea7c">
+            <ul class="nav navbar-nav">
+                <li><a href="{{ url_for('admin.adminhome') }}" title="{{ ("用户管理") }}">{{ ("用户管理") }}</a>
+                </li>
+                <li><a href="{{ url_for('admin.adminsetting') }}" title="{{ ("系统设置") }}">{{ ("系统设置") }}</a>
+                </li>
+                <li><a href="{{ url_for('admin.adminrecord') }}" title="{{ ("赠予操作记录") }}">{{ ("赠予操作记录") }}</a>
+                </li>
+                <li><a href="{{ url_for('admin.admincount') }}" title="{{ ("月度统计") }}">{{ ("月度统计") }}</a>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                {% if current_user.is_authenticated %}
+                    <li><a href="#">{{ current_user.name }}</a></li>
+                    <li><a href="{{ url_for('auth.logout') }}">{{ ("退出") }}</a></li>
+                {% else %}
+                    <li><a href="{{ url_for('auth.login') }}">{{ ("登录") }}</a></li>
+                    {#                    <li><a href="{{ url_for('auth.register') }}">{{ ("注册") }}</a></li>#}
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
