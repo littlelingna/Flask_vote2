@@ -30,6 +30,11 @@ def adminhome():
                            AeroCoinTurnoverNum=AeroCoinTurnoverNum, AeroCoinLeftNum=AeroCoinLeftNum, UserList=UserList,
                            title=u'管理员首页')
 
+@admin.route('/adminhome/add_user', methods=['GET', 'POST'])
+@login_required
+def add_user():
+    return render_template("adminhome.html",title=u'管理员首页')
+
 
 @admin.route('/adminsetting', methods=['GET', 'POST'])
 @login_required

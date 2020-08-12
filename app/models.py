@@ -30,6 +30,7 @@ class Turnover(db.Model):
     directLeader = db.Column(db.String)
     AeroCoin_Num = db.Column(db.Integer)
     TurnoverTime = db.Column(db.DateTime, default=datetime.now,onupdate=datetime.now)
+    TurnoverPreiod = db.Column(db.String)
 
 
 class User(UserMixin, db.Model):

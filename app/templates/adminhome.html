@@ -93,6 +93,97 @@
             </table>
         </div>
     </div>
+    <div class="modal fade" id="add" tabindex="-1"
+         role="dialog" aria-labelledby="addLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="false">&times;</button>
+                    <h5 class="modal-title" id="addLabel" style="font-weight:bold">
+                        新增用户(带<span style="color:red;width:20px">*</span>的选项为必填项)</h5>
+                </div>
+                <form style="float:none" class="form-horizontal" method="post" action="{{ url_for('admin.add_user') }}"
+                      id="add_user_form">
+                    <div class="modal-form" style="margin-top: 0">
+                        <div class="col-sm-12" style="margin-top: 5px">
+                            <label for="add_name" class="control-label" style="width:50px;text-align: right">
+                                <span style="color:red;width:20px">*</span>用户名</label>
+                            <input type="text" id="add_name" name="add_name"
+                                   placeholder="请输入用户名" class="form-control input-inline" style="width: 200px">
+                            <label for="add_gender" class="control-label"
+                                   style="width:50px;text-align: right">性别</label>
+                            <select id="add_gender" name="add_gender" class="form-control input-inline"
+                                    style="width: 200px">
+                                <option value="1" selected>男</option>
+                                <option value="0">女</option>
+                            </select>
+                        </div>
+{#                        <div class="col-sm-12" style="margin-top: 5px">#}
+{#                            <label for="add_company" class="control-label"#}
+{#                                   style="width:50px;text-align: right">公司</label>#}
+{#                            {% if group_login == "超级管理员" %}#}
+{#                                <select id="add_company" name="add_company" class="form-control input-inline"#}
+{#                                        style="width: 200px">#}
+{#                                    <option value="1">长峰股份</option>#}
+{#                                    <option value="2">长峰医疗分公司</option>#}
+{#                                    <option value="4">长峰科技</option>#}
+{#                                    <option value="5">长峰科威</option>#}
+{#                                    <option value="6">长峰科发</option>#}
+{#                                    <option value="7">航天柏克</option>#}
+{#                                    <option value="8">航天精一</option>#}
+{#                                    <option value="9">朝阳电源</option>#}
+{#                                </select>#}
+{#                            {% else %}#}
+{#                                <select id="add_company" name="add_company" class="form-control input-inline"#}
+{#                                        style="width: 200px">#}
+{#                                    <option value="{{ company_login }}" selected>{{ company_login_name }}</option>#}
+{##}
+{#                                </select>#}
+{#                            {% endif %}#}
+{#                            <label for="add_department" class="control-label"#}
+{#                                   style="width:50px;text-align: right">部门</label>#}
+{#                            <input type="text" id="add_department" name="add_department"#}
+{#                                   class="form-control input-inline" value="" placeholder="部门名称" style="width: 200px">#}
+{#                        </div>#}
+{#                        <div class="col-sm-12" style="margin-top: 5px">#}
+{#                            <label for="add_position" class="control-label"#}
+{#                                   style="width:50px;text-align: right">职位</label>#}
+{#                            <input type="text" id="add_position" name="add_position" class="form-control input-inline"#}
+{#                                   value="" placeholder="职位" style="width: 200px">#}
+{#                            <label for="add_role" class="control-label" style="width:50px;text-align: right">角色</label>#}
+{#                            <select id="add_role" name="add_role" class="form-control input-inline"#}
+{#                                    style="width: 200px">#}
+{#                                {% for group in groups %}#}
+{#                                    {% if group.name == "超级管理员" %}#}
+{#                                        {% if group_login == "超级管理员" %}#}
+{#                                            <option value="{{ group.id }}">{{ group.name }}</option>#}
+{#                                        {% endif %}#}
+{#                                    {% else %}#}
+{#                                        <option value="{{ group.id }}">{{ group.name }}</option>#}
+{#                                    {% endif %}#}
+{#                                {% endfor %}#}
+{#                            </select>#}
+{#                        </div>#}
+{#                        <div class="col-sm-12" style="margin-top: 5px">#}
+{#                            <label for="add_phone" class="control-label" style="width:50px;text-align: right">#}
+{#                                <span style="color:red;width:20px">*</span>电话</label>#}
+{#                            <input type="text" id="add_phone" name="add_phone"#}
+{#                                   placeholder="请输入电话" class="form-control input-inline" style="width: 200px">#}
+{#                            <label for="add_email" class="control-label" style="width:50px;text-align: right">#}
+{#                                <span style="color:red;width:20px">*</span>邮箱</label>#}
+{#                            <input type="text" id="add_email" name="add_email"#}
+{#                                   placeholder="请输入邮箱" class="form-control input-inline" style="width: 200px">#}
+{#                        </div>#}
+                    </div>
+                    <div class="col-sm-12" id="err_message" style="height:30px;margin-top: 5px;color:red"></div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                        <button type="button" class="btn btn-primary" onclick="check_submit()">确认</button>
+                    </div>
+                </form>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
 
 
 {% endblock page_body %}
