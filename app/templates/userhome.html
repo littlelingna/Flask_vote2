@@ -22,13 +22,21 @@
         {% if current_user.is_authenticated %}
             <h3>您好 : {{ current_user.username }}</h3>
             {#     欢迎{{ current_user.username }}#}
-            <h4> 您当前获赠的Aero币有 <a>{{ AeroCoinReceived[0] }} </a>枚<br>您当前剩余的Aero币有 <a>{{ AeroCoinLefted[0] }}</a>枚&nbsp;&nbsp;&nbsp;&nbsp;
-                {% if sign %}您当前收到上交aero币有 <a>{{ AeroCoinFromuser[0] }}</a>枚{% endif %}</h4>
+            <h4> 您当前获赠的Aero币有 <span style="color:#000000;">{{ AeroCoinReceived[0] }} </span>枚<br>您当前剩余的Aero币有 <span
+                    id="aerocoin_lefted" style="color:#000000;">{{ AeroCoinLefted[0] }}</span>枚&nbsp;&nbsp;&nbsp;&nbsp;
+                {% if sign %}您当前收到上交aero币有 <span style="color:#000000;">{{ AeroCoinFromuser[0] }}</span>枚{% endif %}</h4>
             {% if current_user.username != '郭会明' %}
-                {% for message in get_flashed_messages() %}
-                    <div class="alert-info"> {{ message }}</div>
-                {% endfor %}
-                {{ wtf.quick_form(form2) }}
+                {#                {{ wtf.quick_form(form2) }}#}
+                <button type="button" class="btn btn-large btn-primary" data-toggle="modal"
+                        data-target="#turnover" onclick="goTurnover()">
+                    回收Aero币
+                </button>
+                <h4 style="color: red">
+                    {% for message in get_flashed_messages() %}
+                        <div class="alert-info"> {{ message }}</div>
+                    {% endfor %}
+                </h4>
+
             {% endif %}
 
             {######TODO###   当前上交Aero币仍然走 Action     #}
@@ -49,16 +57,28 @@
                     <th> 时间</th>
                     <th> 理 由</th>
                     <th> 理由详情</th>
+                    <th> 编 辑</th>
                 </tr>
                 {% for record in GivetoRecords |sort(attribute='ActionTime',reverse=True ) %}
                     <tr>
-                        <td> {{ record[0] }} </td>
-                        <td> {{ record[1] }} </td>
-                        <td> {{ record[2] }} </td>
-                        <td> {{ record[3] }} </td>
-                        <td> {{ record[4] }} </td>
-                        <td> {{ record[5] }} </td>
-                        <td> {{ record[6] }}</td>
+                        <td id="fromuser_{{ record[0] }}"> {{ record[1] }} </td>
+                        <td id="touser_{{ record[0] }}"> {{ record[2] }} </td>
+                        <td id="aerocoin_type_{{ record[0] }}"> {{ record[3] }} </td>
+                        <td id="aerocoin_num_{{ record[0] }}"> {{ record[4] }} </td>
+                        <td id="actiontime_{{ record[0] }}"> {{ record[5] }} </td>
+                        <td id="reason_{{ record[0] }}"> {{ record[6] }}</td>
+                        <td id="reasonnote_{{ record[0] }}"> {{ record[7] }} </td>
+                        <td>
+                            <button type="button" class="btn  btn-success btn-sm" data-toggle="modal"
+                                    data-target="#modify" style="margin-right: 10px"
+                                    onclick="goModify('{{ record[0] }}')">修改
+                            </button>
+                            <button type="button" class="btn  btn-danger btn-sm" data-toggle="modal"
+                                    data-target="#delete"
+                                    onclick="goDelete('{{ url_for('main.actiondelete',actionid=record[0]) }}','{{ record[0] }}')">
+                                删除
+                            </button>
+                        </td>
                         {#               <td> 修改 </td>#}
                     </tr>
                     {#                    <div>{{ comment.body }}</div>#}
@@ -69,7 +89,6 @@
             </table>
         </div>
     </div>
-
 
     <div class="container">
         {#       在用户首页通常显示用户投币的记录，一个table显示，然后是投币的操作form， 还需要添加回收aero币的按钮  }#}
@@ -133,6 +152,251 @@
         {% endfor %}
         {{ wtf.quick_form(form1) }}
     </div>
+
+    <div class="modal fade" id="turnover" tabindex="-1"
+         role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h5 class="modal-title" id="turnoverLabel" style="font-weight: bold">回收Aero币</h5>
+                </div>
+                <div class="modal-body" style="padding-top: 0">
+                    确认将剩余Aero币全部上交上级吗？
+                </div>
+                <div class="col-sm-12" style="height: 30px;margin-top:5px;color:red" id="err_message1"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" id="a_turnover">确认</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+    <div class="modal fade" id="modify" tabindex="-1"
+         role="dialog" aria-labelledby="modifyLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="false">&times;</button>
+                    <h5 class="modal-title" id="modifyLabel" style="font-weight:bold">
+                        修改赠予信息(带<span style="color:red;width:20px">*</span>的选项为必填项)</h5>
+                </div>
+                <form style=";float:none" class="form-horizontal" enctype="application/x-www-form-urlencoded">
+                    <div class="modal-form" style="margin-top: 0">
+                        <div class="col-sm-12" style="margin-top: 5px">
+                            <label for="modify_touser" class="control-label" style="width: 80px;margin-top: 5px"><span
+                                    style="color:red ;width:20px">*</span>赠予对象</label>
+                            <select id="modify_touser" name="modify_touser" class="form-control input-inline"
+                                    style="width: 450px;display: inline-grid">
+                                {#                                <option value=""></option>#}
+                                {#                                {% for fromuser in fromuserList %}#}
+                                {#                                    <option value="{{ fromuser[0] }}">{{ fromuser[0] }}</option>#}
+                                {#                                {% endfor %}#}
+
+                                <option value="焦函">焦函</option>
+                                <option value="王亚伟">王亚伟</option>
+                                <option value="山丹">山丹</option>
+                                <option value="武卫文">武卫文</option>
+                                <option value="徐明洲">徐明洲</option>
+                                <option value="王姝">王姝</option>
+                                <option value="肖金萍">肖金萍</option>
+                                <option value="王鑫龙">王鑫龙</option>
+                                <option value="李纪念">李纪念</option>
+                                <option value="张煜刚">张煜刚</option>
+                                <option value="张梦巧">张梦巧</option>
+                                <option value="章俊伟">章俊伟</option>
+                                <option value="范宇">范宇</option>
+                                <option value="滕一">滕一</option>
+                                <option value="王诗情">王诗情</option>
+                                <option value="许芳迪">许芳迪</option>
+                            </select>
+                            <label for="modify_aerocoin_type" class="control-label" style="width: 80px;margin-top: 5px"><span
+                                    style="color:red ;width:20px">*</span>Aero币类型</label>
+                            <select id="modify_aerocoin_type" name="modify_aerocoin_type"
+                                    class="form-control input-inline"
+                                    style="width: 450px;display: inline-grid">
+                                <option value="Aero币">Aero币</option>
+                            </select>
+                            <label for="modify_aerocoin_num" class="control-label"
+                                   style="width:80px;margin-top: 5px;text-align: right">
+                                <span style="color:red;width:20px">*</span>赠予数量</label>
+                            <input type="number" id="modify_aerocoin_num" name="modify_aerocoin_num"
+                                   placeholder="请输入赠予Aero币数量" class="form-control input-inline" min="1" max="500"
+                                   style="width: 450px;display: inline-grid">
+                            <label for="modify_reason" class="control-label" style="width: 80px;margin-top: 5px"><span
+                                    style="color:red;width: 20px">*</span>赠予理由</label>
+                            <select id="modify_reason" name="modify_reason"
+                                    class="form-control input-inline"
+                                    style="width: 450px;display: inline-grid">
+                                <option value=""></option>
+                                {% for reason in ReasonList %}
+                                    <option value="{{ reason[0] }}">{{ reason[0] }}</option>
+                                {% endfor %}
+                            </select>
+                            <label for="modify_reasonnote" class="control-label"
+                                   style="margin-top: 5px;text-align: left">
+                                赠予理由详情，其他类型时必填</label>
+                            <textarea rows="5" id="modify_reasonnote" name="modify_reasonnote" class="form-control"
+                                      placeholder="请输入赠予理由详情"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-sm-12" style="height: 30px;margin-top:5px;color:red" id="err_message2"></div>
+                    <input type="hidden" id="modify_id"/>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                        <button type="button" class="btn btn-primary" id="modify_it">确认</button>
+                    </div>
+                </form>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+    <div class="modal fade" id="delete" tabindex="-1"
+         role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h5 class="modal-title" id="deleteLabel" style="font-weight: bold">删除赠予记录</h5>
+                </div>
+                <div class="modal-body" style="padding-top: 0">
+                    这将删除此条赠予&nbsp;<span id="s_delete"></span>&nbsp;的记录，确认删除吗？
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-danger"><a href="" style="color:white" id="a_delete">确认</a>
+                    </button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+    <script src="/static/jquery-2.2.3.min.js"></script>
+    <script>
+        function goTurnover() {
+            $('#err_message1').html("");
+        }
+
+        $('#a_turnover').click(function () {
+            var data = {
+                'aerocoin_lefted': parseInt($.trim($("#aerocoin_lefted").html()))
+            };
+            if (data.aerocoin_lefted <= 0) {
+                $('#err_message1').html("Aero币余额不足!");
+                return false
+            }
+            else {
+                $.ajax({
+                    url: '{{ url_for('main.turnover') }}',
+                    type: 'POST',
+                    data: data,
+                    async: true,
+                    success: function () {
+                        $('#aerocoin_lefted').html(0);
+                        $('#turnover').modal('hide')
+                    },
+                    error: function () {
+                        $('#err_message1').html("服务器出错了!")
+                    }
+                });
+                return false;
+            }
+        });
+
+        function goDelete(text, name) {
+            $('#a_delete').attr('href', text);
+            $('#s_delete').html($('#touser_' + name).html())
+        }
+
+        function goModify(id) {
+            $('#err_message2').html("");
+            $('#modify_id').val(id);
+            $('#modify_aerocoin_num').val(parseInt($('#aerocoin_num_' + id).html().trim()));
+            $('#modify_reasonnote').val($('#reasonnote_' + id).html());
+            var opt_touser = document.getElementById("modify_touser");
+            for (var i = 0; i < opt_touser.options.length; i++) {
+                if ($('#touser_' + id).html().trim() === opt_touser.options[i].innerHTML.trim())
+                    opt_touser.options[i].selected = "selected"
+            }
+            var opt_aerocoin_type = document.getElementById("modify_aerocoin_type");
+            for (var i = 0; i < opt_aerocoin_type.options.length; i++) {
+                if ($('#aerocoin_type_' + id).html().trim() === opt_aerocoin_type.options[i].innerHTML.trim())
+                    opt_aerocoin_type.options[i].selected = "selected"
+            }
+            var opt_reason = document.getElementById("modify_reason");
+            for (var i = 0; i < opt_reason.options.length; i++) {
+                if ($('#reason_' + id).html().trim() === opt_reason.options[i].innerHTML.trim()) {
+                    opt_reason.options[i].selected = "selected"
+                }
+            }
+
+
+        }
+
+        $('#modify_it').click(function () {
+            var data = {
+                'actionid': $("#modify_id").val(),
+                'touser': $("#modify_touser").val(),
+                'aerocoin_type': $.trim($('#modify_aerocoin_type').val()),
+                'aerocoin_num': parseInt($.trim($("#modify_aerocoin_num").val())),
+                'reason': $.trim($("#modify_reason").val()),
+                'reasonnote': $.trim($('#modify_reasonnote').val())
+            };
+            if (data.touser === "") {
+                $('#err_message2').html("赠予对象不能为空!");
+                return false
+            }
+            else if (data.aerocoin_type === "") {
+                $('#err_message2').html("Aero币类型不能为空!");
+                return false
+            }
+            else if (data.aerocoin_num > 500) {
+                $('#err_message').html("赠予Aero币数量应小于500!");
+                return false
+            }
+            else if (data.aerocoin_num < 0) {
+                $('#err_message2').html("赠予Aero币数量应大于0!");
+                return false
+            }
+            else if ({{ AeroCoinLefted[0] }}+parseInt($('#aerocoin_num_' + data.actionid).html().trim()) - data.aerocoin_num < 0) {
+                $('#err_message2').html("Aero币余额不足!");
+                return false
+            }
+            else if (data.reason === "") {
+                $('#err_message2').html("赠予理由种类不能为空!");
+                return false
+            }
+            else if (data.reason === '其他') {
+                if (data.reasonnote === "") {
+                    $('#err_message2').html("赠予理由种类为其他时，理由详情不能为空!");
+                    return false
+                }
+            }
+            else {
+                $.ajax({
+                    url: '{{ url_for('main.modify') }}',
+                    type: 'POST',
+                    data: data,
+                    async: true,
+                    success: function (res) {
+                        console.log(res.actiontime)
+                        $('#aerocoin_lefted').html(res.aerocoin_lefted);
+                        $('#modify').modal('hide');
+                        var id = data.actionid;
+                        $('#fromuser_' + id).html(res.fromuser);
+                        $('#touser_' + id).html(res.touser);
+                        $('#aerocoin_type_' + id).html(res.aerocoin_type);
+                        $('#aerocoin_num_' + id).html(res.aerocoin_num);
+                        $('#actiontime_' + id).html(res.actiontime);
+                        $('#reason_' + id).html(res.reason);
+                        $('#reasonnote_' + id).html(res.reasonnote)
+                    },
+                    error: function () {
+                        $('#err_message2').html("服务器出错了!")
+                    }
+                });
+                return false;
+            }
+        })
+    </script>
 
 {% endblock page_body %}
 
