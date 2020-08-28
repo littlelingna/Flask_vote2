@@ -5,6 +5,7 @@ from . import main
 from .. import db
 from ..models import Action, Assign, User, Ranking, Department, Turnover, Reason
 from flask_login import login_required, current_user
+from sqlalchemy import and_
 
 from .forms import userGiveToActionForm, ChangePasswordForm, UserRankingqueryForm
 
@@ -164,7 +165,8 @@ def userhome():
         AeroCoinFromuser = Assign.query.with_entities(Assign.AeroCoin_fromuser).filter_by(
             username=current_user.username).first()
         ReasonList = db.session.query(Reason.ReasonText)
-        Leader = Department.query.with_entities(Department.DeptLeader).all()
+        Leader = User.query.with_entities(User.directLeader).filter(
+            and_(User.directLeader != None, User.directLeader != '')).distinct().all()
         # print("部门领导",Leader)
         sign = False
         for leader in Leader:
@@ -302,6 +304,13 @@ def userranking():
         return render_template('userranking.html', form=form, rankingquery=rankingquery, title=u'查询优秀员工排名')
 
     return render_template('userranking.html', form=form, title=u'查询优秀员工排名')
+
+
+@main.route('/userturnpositive', methods=['GET', 'POST'])
+@login_required
+def userturnpositive():
+    return render_template('userturnpositive.html', title=u'新员工转正')
+
 
 
 @main.route('/shoutdown')

@@ -24,18 +24,14 @@
             {#     欢迎{{ current_user.username }}#}
             <h4> 您当前获赠的Aero币有 <span style="color:#000000;">{{ AeroCoinReceived[0] }} </span>枚<br>您当前剩余的Aero币有 <span
                     id="aerocoin_lefted" style="color:#000000;">{{ AeroCoinLefted[0] }}</span>枚&nbsp;&nbsp;&nbsp;&nbsp;
-                {% if sign %}您当前收到上交aero币有 <span style="color:#000000;">{{ AeroCoinFromuser[0] }}</span>枚{% endif %}</h4>
+                {% if sign %}您当前收到上交aero币有 <span style="color:#000000;">{{ AeroCoinFromuser[0] }}</span>枚{% endif %}
+            </h4>
             {% if current_user.username != '郭会明' %}
                 {#                {{ wtf.quick_form(form2) }}#}
                 <button type="button" class="btn btn-large btn-primary" data-toggle="modal"
                         data-target="#turnover" onclick="goTurnover()">
                     回收Aero币
                 </button>
-                <h4 style="color: red">
-                    {% for message in get_flashed_messages() %}
-                        <div class="alert-info"> {{ message }}</div>
-                    {% endfor %}
-                </h4>
 
             {% endif %}
 
@@ -221,7 +217,7 @@
                                    style="width:80px;margin-top: 5px;text-align: right">
                                 <span style="color:red;width:20px">*</span>赠予数量</label>
                             <input type="number" id="modify_aerocoin_num" name="modify_aerocoin_num"
-                                   placeholder="请输入赠予Aero币数量" class="form-control input-inline" min="1" max="500"
+                                   placeholder="请输入赠予Aero币数量" class="form-control input-inline" min="1"
                                    style="width: 450px;display: inline-grid">
                             <label for="modify_reason" class="control-label" style="width: 80px;margin-top: 5px"><span
                                     style="color:red;width: 20px">*</span>赠予理由</label>
@@ -348,15 +344,11 @@
                 $('#err_message2').html("Aero币类型不能为空!");
                 return false
             }
-            else if (data.aerocoin_num > 500) {
-                $('#err_message').html("赠予Aero币数量应小于500!");
-                return false
-            }
             else if (data.aerocoin_num < 0) {
                 $('#err_message2').html("赠予Aero币数量应大于0!");
                 return false
             }
-            else if ({{ AeroCoinLefted[0] }}+parseInt($('#aerocoin_num_' + data.actionid).html().trim()) - data.aerocoin_num < 0) {
+            else if (parseInt($.trim($("#aerocoin_lefted").html())) + parseInt($('#aerocoin_num_' + data.actionid).html().trim()) - data.aerocoin_num < 0) {
                 $('#err_message2').html("Aero币余额不足!");
                 return false
             }
@@ -364,11 +356,9 @@
                 $('#err_message2').html("赠予理由种类不能为空!");
                 return false
             }
-            else if (data.reason === '其他') {
-                if (data.reasonnote === "") {
-                    $('#err_message2').html("赠予理由种类为其他时，理由详情不能为空!");
-                    return false
-                }
+            else if (data.reason === '其他（需备注明确内容）' && data.reasonnote === "") {
+                $('#err_message2').html("赠予理由种类为其他时，理由详情不能为空!");
+                return false
             }
             else {
                 $.ajax({
