@@ -3,7 +3,7 @@
 from flask import render_template, request, flash, redirect, url_for, current_app, abort, jsonify, json, Response
 from . import main
 from .. import db
-from ..models import Action, Assign, User, Ranking, Department, Turnover, Reason
+from ..models import Action, Assign, User, Ranking, Department, Turnover, Reason, Evaluation
 from flask_login import login_required, current_user
 from sqlalchemy import and_
 
@@ -306,11 +306,53 @@ def userranking():
     return render_template('userranking.html', form=form, title=u'查询优秀员工排名')
 
 
-@main.route('/userturnpositive', methods=['GET', 'POST'])
+@main.route('/userevaluation/search', methods=['GET', 'POST'])
 @login_required
-def userturnpositive():
-    return render_template('userturnpositive.html', title=u'新员工转正')
+def userevaluationsearch():
+    username = request.form.get("username")
+    evaluation_exist = Evaluation.query.filter_by(BeEvaluatedUser=username, EvaluateUser=current_user.username).first()
+    if evaluation_exist == None:
+        return url_for('main.userevaluation')
+    else:
+        MoralTrait = evaluation_exist.MoralTrait
+        ProfessionalAbility = evaluation_exist.ProfessionalAbility
+        ManagementAbility = evaluation_exist.ManagementAbility
+        TeamCapacity = evaluation_exist.TeamCapacity
+        WorkingAttitude = evaluation_exist.WorkingAttitude
+        JobPerformance = evaluation_exist.JobPerformance
+        Message = evaluation_exist.Message
+        return jsonify(
+            {'MoralTrait': MoralTrait, 'ProfessionalAbility': ProfessionalAbility, 'ManagementAbility': ManagementAbility, 'TeamCapacity': TeamCapacity,
+             'WorkingAttitude': WorkingAttitude, 'JobPerformance': JobPerformance, 'Message': Message})
 
+
+@main.route('/userevaluation', methods=['GET', 'POST'])
+@login_required
+def userevaluation():
+    if request.method=='POST':
+        username = request.form.get("username")
+        MoralTrait = request.form.get("MoralTrait")
+        ProfessionalAbility = request.form.get("ProfessionalAbility")
+        ManagementAbility = request.form.get("ManagementAbility")
+        TeamCapacity = request.form.get("TeamCapacity")
+        WorkingAttitude = request.form.get("WorkingAttitude")
+        JobPerformance = request.form.get("JobPerformance")
+        Message = request.form.get("Message")
+        userEvaluation = Evaluation(BeEvaluatedUser=username,
+                                    EvaluateUser=current_user.username,
+                                    MoralTrait=MoralTrait,
+                                    ProfessionalAbility=ProfessionalAbility,
+                                    ManagementAbility=ManagementAbility,
+                                    TeamCapacity=TeamCapacity,
+                                    WorkingAttitude=WorkingAttitude,
+                                    JobPerformance=JobPerformance,
+                                    Message=Message
+                                    )
+        db.session.add(userEvaluation)
+        db.session.commit()
+        return redirect(url_for('main.userevaluation'))
+    if request.method=='GET':
+        return render_template('userevaluation.html', title=u'新员工转正')
 
 
 @main.route('/shoutdown')
