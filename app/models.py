@@ -3,7 +3,6 @@ from flask_login import UserMixin, AnonymousUserMixin
 from datetime import datetime
 
 
-
 class Action(db.Model):
     __tablename__ = 'coinaction'
     ActionId = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -13,7 +12,7 @@ class Action(db.Model):
     AeroCoin_Num = db.Column(db.Integer)
     Reason = db.Column(db.String)
     ReasonNote = db.Column(db.String)
-    ActionTime = db.Column(db.DateTime, default=datetime.now,onupdate=datetime.now)
+    ActionTime = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
     remark = db.Column(db.String)
     ActionPreiod = db.Column(db.String)
     # users = db.relationship('User', backref='role')
@@ -23,13 +22,14 @@ class Action(db.Model):
     #     db.session.add_all(map(lambda r: Action(name=r), ['Guests', 'Administrators']))
     #     db.session.commit()
 
+
 class Turnover(db.Model):
     __tablename__ = 'actionturnover'
-    TurnoverId = db.Column(db.Integer,primary_key=True,autoincrement=True)
+    TurnoverId = db.Column(db.Integer, primary_key=True, autoincrement=True)
     FromUser = db.Column(db.String)
     directLeader = db.Column(db.String)
     AeroCoin_Num = db.Column(db.Integer)
-    TurnoverTime = db.Column(db.DateTime, default=datetime.now,onupdate=datetime.now)
+    TurnoverTime = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
     TurnoverPreiod = db.Column(db.String)
 
 
@@ -45,7 +45,7 @@ class User(UserMixin, db.Model):
     AeroCoin_Num = db.Column(db.Integer)
     employee_date = db.Column(db.Date)
 
-#以为报错 NotImplementedError('No `id` attribute - override `get_id`')，所以override get_id方法
+    # 以为报错 NotImplementedError('No `id` attribute - override `get_id`')，所以override get_id方法
     def get_id(self):
         return self.userid
 
@@ -59,6 +59,7 @@ class User(UserMixin, db.Model):
 @login_manager.user_loader
 def load_user(userid):
     return User.query.get(int(userid))
+
 
 # class Post(db.Model):
 #     __tablename__ = 'posts'
@@ -95,6 +96,7 @@ class Assign(db.Model):
     # post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
     # author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
+
 class Ranking(db.Model):
     __tablename__ = 'rankinghistory'
     userid = db.Column(db.Integer, primary_key=True)
@@ -104,22 +106,41 @@ class Ranking(db.Model):
     AeroCoin_received = db.Column(db.Integer)
     ActionPreiod = db.Column(db.String)
 
+
 class Department(db.Model):
     __tablename__ = 'department'
-    DeptId = db.Column(db.Integer,primary_key=True)
+    DeptId = db.Column(db.Integer, primary_key=True)
     Deptname = db.Column(db.String)
     DeptLeader = db.Column(db.String)
     ParentDeptId = db.Column(db.Integer)
     Note = db.Column(db.String)
 
+
 class Role(db.Model):
     __tablename__ = 'role'
-    RoleId = db.Column(db.Integer,primary_key=True)
+    RoleId = db.Column(db.Integer, primary_key=True)
     Rolename = db.Column(db.String)
     AeroCoin_type = db.Column(db.String)
     AeroCoin_num = db.Column(db.Integer)
 
+
 class Reason(db.Model):
     __tablename__ = 'actionreason'
-    ReasonId = db.Column(db.Integer,primary_key=True)
+    ReasonId = db.Column(db.Integer, primary_key=True)
     ReasonText = db.Column(db.String)
+
+
+class Evaluation(db.Model):
+    __tablename__ = 'evaluation'
+    EvaluationId = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    BeEvaluatedUser = db.Column(db.String)
+    EvaluateUser = db.Column(db.String)
+    MoralTrait = db.Column(db.Integer)
+    ProfessionalAbility = db.Column(db.Integer)
+    ManagementAbility = db.Column(db.Integer)
+    TeamCapacity = db.Column(db.Integer)
+    WorkingAttitude = db.Column(db.Integer)
+    JobPerformance = db.Column(db.Integer)
+    Message = db.Column(db.String)
+    EvaluateTime = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
+    Note = db.Column(db.String)

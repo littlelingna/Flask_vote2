@@ -1,0 +1,513 @@
+{% extends 'base.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+{% block navbar %}
+    {# { nav.top.render() }} #}
+    {% include 'includes/_usernavbar.html' %}
+{% endblock %}
+{% from "bootstrap/pagination.html" import render_pagination %}
+
+{% for message in get_flashed_messages() %}
+    <div class="alert alert-warning">
+        <button type="button" class="close" data-dismiss="alert">×</button>
+        {{ message }}
+    </div>
+{% endfor %}
+
+{% block page_body %}
+    {{ super() }}
+    <div class="container">
+        <div class="row">
+            <section class="col-lg-7 col-md-12 col-sm-12">
+                <form class="form-horizontal" style="width: 100%" method="post" enctype="multipart/form-data">
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label"><span style="color: red">*</span>待转正人</label>
+                        <div class="col-sm-9">
+                            <select class="form-control" name="username" id="username"
+                                    onchange="search(this.options[this.options.selectedIndex].value)" required>
+                                <option class="defaultval" selected
+                                        value=""></option>
+                                <option value="张三">张三</option>
+                                <option value="李四">李四</option>
+                                {#                                {% for s in company_choice %}#}
+                                {#                                    <option value="{{ s.0 }}">{{ s.1 }}</option>#}
+                                {#                                {% endfor %}#}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label"><span style="color: red">*</span>道德品质</label>
+                        <div class="col-sm-9">
+                            <label class="radio-inline">
+                                <input type="radio" name="optionsRadiosinline1" id="optionsRadios1"
+                                       style="display: none"
+                                       value="0" checked>
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="optionsRadiosinline1" id="optionsRadios1" value="1"> 1
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="optionsRadiosinline1" id="optionsRadios1" value="2"> 2
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="optionsRadiosinline1" id="optionsRadios1" value="3"> 3
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="optionsRadiosinline1" id="optionsRadios1" value="4"> 4
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="optionsRadiosinline1" id="optionsRadios1" value="5"> 5
+                            </label>
+                        </div>
+
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label"><span style="color: red">*</span>专业能力</label>
+                        <div class="col-sm-9">
+                            <label class="radio-inline">
+                                <input type="radio" name="optionsRadiosinline2" id="optionsRadios2"
+                                       style="display: none"
+                                       value="0" checked>
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="optionsRadiosinline2" id="optionsRadios2" value="1"> 1
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="optionsRadiosinline2" id="optionsRadios2" value="2"> 2
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="optionsRadiosinline2" id="optionsRadios2" value="3"> 3
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="optionsRadiosinline2" id="optionsRadios2" value="4"> 4
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="optionsRadiosinline2" id="optionsRadios2" value="5"> 5
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label"><span style="color: red">*</span>管理能力</label>
+                        <div class="col-sm-9">
+                            <label class="radio-inline">
+                                <input type="radio" name="optionsRadiosinline3" id="optionsRadios3"
+                                       style="display: none"
+                                       value="0" checked>
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="optionsRadiosinline3" id="optionsRadios3" value="1"> 1
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="optionsRadiosinline3" id="optionsRadios3" value="2"> 2
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="optionsRadiosinline3" id="optionsRadios3" value="3"> 3
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="optionsRadiosinline3" id="optionsRadios3" value="4"> 4
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="optionsRadiosinline3" id="optionsRadios3" value="5"> 5
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label"><span style="color: red">*</span>团队能力</label>
+                        <div class="col-sm-9">
+                            <label class="radio-inline">
+                                <input type="radio" name="optionsRadiosinline4" id="optionsRadios4"
+                                       style="display: none"
+                                       value="0" checked>
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="optionsRadiosinline4" id="optionsRadios4" value="1"> 1
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="optionsRadiosinline4" id="optionsRadios4" value="2"> 2
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="optionsRadiosinline4" id="optionsRadios4" value="3"> 3
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="optionsRadiosinline4" id="optionsRadios4" value="4"> 4
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="optionsRadiosinline4" id="optionsRadios4" value="5"> 5
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label"><span style="color: red">*</span>工作态度</label>
+                        <div class="col-sm-9">
+                            <label class="radio-inline">
+                                <input type="radio" name="optionsRadiosinline5" id="optionsRadios5"
+                                       style="display: none"
+                                       value="0" checked>
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="optionsRadiosinline5" id="optionsRadios5" value="1"> 1
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="optionsRadiosinline5" id="optionsRadios5" value="2"> 2
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="optionsRadiosinline5" id="optionsRadios5" value="3"> 3
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="optionsRadiosinline5" id="optionsRadios5" value="4"> 4
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="optionsRadiosinline5" id="optionsRadios5" value="5"> 5
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label"><span style="color: red">*</span>工作绩效</label>
+                        <div class="col-sm-9">
+                            <label class="radio-inline">
+                                <input type="radio" name="optionsRadiosinline6" id="optionsRadios6"
+                                       style="display: none"
+                                       value="0" checked>
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="optionsRadiosinline6" id="optionsRadios6" value="1"> 1
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="optionsRadiosinline6" id="optionsRadios6" value="2"> 2
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="optionsRadiosinline6" id="optionsRadios6" value="3"> 3
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="optionsRadiosinline6" id="optionsRadios6" value="4"> 4
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="optionsRadiosinline6" id="optionsRadios6" value="5"> 5
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label"><span style="color: red">*</span>对新人留言</label>
+                        <div class="col-sm-9">
+                                    <textarea rows="6" class="form-control" id="Message" maxlength="500"
+                                              required></textarea>
+                        </div>
+                    </div>
+
+                    <div style="text-align: center">
+                        <button type="button" class="btn btn-large btn-primary" id="submitbtn" data-toggle="modal"
+                                data-target="#form_submit" onclick="gosubmit()">
+                            提交
+                        </button>
+                    </div>
+
+                </form>
+            </section>
+            <section class="col-lg-5 col-md-12 col-sm-12">
+                <div style="text-align: center;margin-bottom: 40px"><h4>评分情况</h4></div>
+                <script src="{{ url_for('static', filename='echarts.min.js') }}"></script>
+                <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+                <div id="main" style="width: auto;height:400px;text-align: center"></div>
+            </section>
+        </div>
+
+    </div>
+    <div class="modal fade" id="form_submit" tabindex="-1"
+         role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h5 class="modal-title" id="turnoverLabel" style="font-weight: bold">提交评价</h5>
+                </div>
+                <div class="modal-body" style="padding-top: 0">
+                    提交后不可更改，确认提交评价吗？
+                </div>
+                <div class="col-sm-12" style="height: 30px;margin-top:5px;color:red" id="err_message1"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" id="evaluate">确认</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+    <script src="/static/jquery-2.2.3.min.js"></script>
+    <script>
+        myecharts([0, 0, 0, 0, 0, 0]);
+
+        function gosubmit() {
+            $('#err_message1').html("");
+        }
+
+        function search(name) {
+            var data = {
+                'username': name
+            };
+            $.ajax({
+                url: '{{ url_for('main.userevaluationsearch') }}',
+                type: 'POST',
+                data: data,
+                async: true,
+                success: function (res) {
+                    if (res.MoralTrait === undefined) {
+                        $("input[name=optionsRadiosinline1][value='0']").prop('checked', true);
+                        $("input[name=optionsRadiosinline2][value='0']").prop('checked', true);
+                        $("input[name=optionsRadiosinline3][value='0']").prop('checked', true);
+                        $("input[name=optionsRadiosinline4][value='0']").prop('checked', true);
+                        $("input[name=optionsRadiosinline5][value='0']").prop('checked', true);
+                        $("input[name=optionsRadiosinline6][value='0']").prop('checked', true);
+                        $("input[name=optionsRadiosinline1]").prop('disabled', false);
+                        $("input[name=optionsRadiosinline2]").prop('disabled', false);
+                        $("input[name=optionsRadiosinline3]").prop('disabled', false);
+                        $("input[name=optionsRadiosinline4]").prop('disabled', false);
+                        $("input[name=optionsRadiosinline5]").prop('disabled', false);
+                        $("input[name=optionsRadiosinline6]").prop('disabled', false);
+                        $('#Message').val('').attr('disabled', false);
+                        myecharts([0, 0, 0, 0, 0, 0]);
+                        $('#submitbtn').show();
+                    }
+                    else {
+                        var MoralTrait = "[value='" + JSON.stringify(res.MoralTrait) + "']";
+                        var ProfessionalAbility = "[value='" + JSON.stringify(res.ProfessionalAbility) + "']";
+                        var ManagementAbility = "[value='" + JSON.stringify(res.ManagementAbility) + "']";
+                        var TeamCapacity = "[value='" + JSON.stringify(res.TeamCapacity) + "']";
+                        var WorkingAttitude = "[value='" + JSON.stringify(res.WorkingAttitude) + "']";
+                        var JobPerformance = "[value='" + JSON.stringify(res.JobPerformance) + "']";
+
+                        $("input[name=optionsRadiosinline1]" + MoralTrait).prop('checked', true);
+                        $("input[name=optionsRadiosinline2]" + ProfessionalAbility).prop('checked', true);
+                        $("input[name=optionsRadiosinline3]" + ManagementAbility).prop('checked', true);
+                        $("input[name=optionsRadiosinline4]" + TeamCapacity).prop('checked', true);
+                        $("input[name=optionsRadiosinline5]" + WorkingAttitude).prop('checked', true);
+                        $("input[name=optionsRadiosinline6]" + JobPerformance).prop('checked', true);
+                        $('#Message').val(res.Message).attr('disabled', true);
+
+                        $("input[name=optionsRadiosinline1]").prop('disabled', true);
+                        $("input[name=optionsRadiosinline2]").prop('disabled', true);
+                        $("input[name=optionsRadiosinline3]").prop('disabled', true);
+                        $("input[name=optionsRadiosinline4]").prop('disabled', true);
+                        $("input[name=optionsRadiosinline5]").prop('disabled', true);
+                        $("input[name=optionsRadiosinline6]").prop('disabled', true);
+
+                        $('#submitbtn').hide();
+                        myecharts([res.MoralTrait, res.ProfessionalAbility, res.ManagementAbility, res.TeamCapacity,
+                            res.WorkingAttitude, res.JobPerformance])
+                    }
+                },
+                error: function () {
+                    $('#err_message2').html("服务器出错了!")
+                }
+            });
+            return false
+        }
+
+        $('#evaluate').click(function () {
+            var data = {
+                'username': $("#username").val(),
+                'MoralTrait': $("input[name='optionsRadiosinline1']:checked").val(),
+                'ProfessionalAbility': $("input[name='optionsRadiosinline2']:checked").val(),
+                'ManagementAbility': $("input[name='optionsRadiosinline3']:checked").val(),
+                'TeamCapacity': $("input[name='optionsRadiosinline4']:checked").val(),
+                'WorkingAttitude': $("input[name='optionsRadiosinline5']:checked").val(),
+                'JobPerformance': $("input[name='optionsRadiosinline6']:checked").val(),
+                'Message': $.trim($('#Message').val())
+            };
+            if (data.username === '') {
+                $('#err_message1').html("待转正人不能为空!");
+                return false
+            }
+            else if (data.MoralTrait === undefined) {
+                $('#err_message1').html("请对道德品质进行打分!");
+                return false
+            }
+            else if (data.ProfessionalAbility === undefined) {
+                $('#err_message1').html("请对专业能力进行打分!");
+                return false
+            }
+            else if (data.ManagementAbility === undefined) {
+                $('#err_message1').html("请对管理能力进行打分!");
+                return false
+            }
+            else if (data.TeamCapacity === undefined) {
+                $('#err_message1').html("请对团队能力进行打分!");
+                return false
+            }
+            else if (data.WorkingAttitude === undefined) {
+                $('#err_message1').html("请对工作态度进行打分!");
+                return false
+            }
+            else if (data.JobPerformance === undefined) {
+                $('#err_message1').html("请对工作绩效进行打分!");
+                return false
+            }
+            else if (data.Message === '') {
+                $('#err_message1').html("请对待转正人进行留言!");
+                return false
+            }
+            else {
+                $.ajax({
+                    url: '{{ url_for('main.userevaluation') }}',
+                    type: 'POST',
+                    data: data,
+                    async: true,
+                    success: function () {
+                        $('#form_submit').modal('hide');
+                        var MoralTrait = "[value='" + data.MoralTrait + "']";
+                        var ProfessionalAbility = "[value='" + data.ProfessionalAbility + "']";
+                        var ManagementAbility = "[value='" + data.ManagementAbility + "']";
+                        var TeamCapacity = "[value='" + data.TeamCapacity + "']";
+                        var WorkingAttitude = "[value='" + data.WorkingAttitude + "']";
+                        var JobPerformance = "[value='" + data.JobPerformance + "']";
+
+                        $("input[name=optionsRadiosinline1]" + MoralTrait).prop('checked', true);
+                        $("input[name=optionsRadiosinline2]" + ProfessionalAbility).prop('checked', true);
+                        $("input[name=optionsRadiosinline3]" + ManagementAbility).prop('checked', true);
+                        $("input[name=optionsRadiosinline4]" + TeamCapacity).prop('checked', true);
+                        $("input[name=optionsRadiosinline5]" + WorkingAttitude).prop('checked', true);
+                        $("input[name=optionsRadiosinline6]" + JobPerformance).prop('checked', true);
+                        $('#Message').html(data.Message).attr('disabled', true);
+
+                        $("input[name=optionsRadiosinline1]").prop('disabled', true);
+                        $("input[name=optionsRadiosinline2]").prop('disabled', true);
+                        $("input[name=optionsRadiosinline3]").prop('disabled', true);
+                        $("input[name=optionsRadiosinline4]").prop('disabled', true);
+                        $("input[name=optionsRadiosinline5]").prop('disabled', true);
+                        $("input[name=optionsRadiosinline6]").prop('disabled', true);
+
+                        $('#submitbtn').hide();
+                        myecharts([data.MoralTrait, data.ProfessionalAbility, data.ManagementAbility,
+                            data.TeamCapacity, data.WorkingAttitude, data.JobPerformance])
+                    },
+                    error: function () {
+                        $('#err_message1').html("服务器出错了!")
+                    }
+                });
+                return false;
+            }
+
+        });
+
+        $('input:radio[name="optionsRadiosinline1"]').change(function () {
+            var data = {
+                'MoralTrait': $("input[name='optionsRadiosinline1']:checked").val(),
+                'ProfessionalAbility': $("input[name='optionsRadiosinline2']:checked").val(),
+                'ManagementAbility': $("input[name='optionsRadiosinline3']:checked").val(),
+                'TeamCapacity': $("input[name='optionsRadiosinline4']:checked").val(),
+                'WorkingAttitude': $("input[name='optionsRadiosinline5']:checked").val(),
+                'JobPerformance': $("input[name='optionsRadiosinline6']:checked").val()
+            };
+            myecharts([data.MoralTrait, data.ProfessionalAbility, data.ManagementAbility,
+                data.TeamCapacity, data.WorkingAttitude, data.JobPerformance])
+        });
+        $('input:radio[name="optionsRadiosinline2"]').change(function () {
+            var data = {
+                'MoralTrait': $("input[name='optionsRadiosinline1']:checked").val(),
+                'ProfessionalAbility': $("input[name='optionsRadiosinline2']:checked").val(),
+                'ManagementAbility': $("input[name='optionsRadiosinline3']:checked").val(),
+                'TeamCapacity': $("input[name='optionsRadiosinline4']:checked").val(),
+                'WorkingAttitude': $("input[name='optionsRadiosinline5']:checked").val(),
+                'JobPerformance': $("input[name='optionsRadiosinline6']:checked").val()
+            };
+            myecharts([data.MoralTrait, data.ProfessionalAbility, data.ManagementAbility,
+                data.TeamCapacity, data.WorkingAttitude, data.JobPerformance])
+        });
+        $('input:radio[name="optionsRadiosinline3"]').change(function () {
+            var data = {
+                'MoralTrait': $("input[name='optionsRadiosinline1']:checked").val(),
+                'ProfessionalAbility': $("input[name='optionsRadiosinline2']:checked").val(),
+                'ManagementAbility': $("input[name='optionsRadiosinline3']:checked").val(),
+                'TeamCapacity': $("input[name='optionsRadiosinline4']:checked").val(),
+                'WorkingAttitude': $("input[name='optionsRadiosinline5']:checked").val(),
+                'JobPerformance': $("input[name='optionsRadiosinline6']:checked").val()
+            };
+            myecharts([data.MoralTrait, data.ProfessionalAbility, data.ManagementAbility,
+                data.TeamCapacity, data.WorkingAttitude, data.JobPerformance])
+        });
+        $('input:radio[name="optionsRadiosinline4"]').change(function () {
+            var data = {
+                'MoralTrait': $("input[name='optionsRadiosinline1']:checked").val(),
+                'ProfessionalAbility': $("input[name='optionsRadiosinline2']:checked").val(),
+                'ManagementAbility': $("input[name='optionsRadiosinline3']:checked").val(),
+                'TeamCapacity': $("input[name='optionsRadiosinline4']:checked").val(),
+                'WorkingAttitude': $("input[name='optionsRadiosinline5']:checked").val(),
+                'JobPerformance': $("input[name='optionsRadiosinline6']:checked").val()
+            };
+            myecharts([data.MoralTrait, data.ProfessionalAbility, data.ManagementAbility,
+                data.TeamCapacity, data.WorkingAttitude, data.JobPerformance])
+        });
+        $('input:radio[name="optionsRadiosinline5"]').change(function () {
+            var data = {
+                'MoralTrait': $("input[name='optionsRadiosinline1']:checked").val(),
+                'ProfessionalAbility': $("input[name='optionsRadiosinline2']:checked").val(),
+                'ManagementAbility': $("input[name='optionsRadiosinline3']:checked").val(),
+                'TeamCapacity': $("input[name='optionsRadiosinline4']:checked").val(),
+                'WorkingAttitude': $("input[name='optionsRadiosinline5']:checked").val(),
+                'JobPerformance': $("input[name='optionsRadiosinline6']:checked").val()
+            };
+            myecharts([data.MoralTrait, data.ProfessionalAbility, data.ManagementAbility,
+                data.TeamCapacity, data.WorkingAttitude, data.JobPerformance])
+        });
+        $('input:radio[name="optionsRadiosinline6"]').change(function () {
+            var data = {
+                'MoralTrait': $("input[name='optionsRadiosinline1']:checked").val(),
+                'ProfessionalAbility': $("input[name='optionsRadiosinline2']:checked").val(),
+                'ManagementAbility': $("input[name='optionsRadiosinline3']:checked").val(),
+                'TeamCapacity': $("input[name='optionsRadiosinline4']:checked").val(),
+                'WorkingAttitude': $("input[name='optionsRadiosinline5']:checked").val(),
+                'JobPerformance': $("input[name='optionsRadiosinline6']:checked").val()
+            };
+            myecharts([data.MoralTrait, data.ProfessionalAbility, data.ManagementAbility,
+                data.TeamCapacity, data.WorkingAttitude, data.JobPerformance])
+        });
+
+        function myecharts(code) {
+            // 基于准备好的dom，初始化echarts实例
+            var myChart = echarts.init(document.getElementById('main'));
+            option = null;
+            option = {
+                tooltip: {},
+                radar: {
+                    //shape: 'circle',
+                    name: {
+                        textStyle: {
+                            color: '#000',
+                            borderRadius: 3,
+                            padding: [3, 5]
+                        }
+                    },
+                    indicator: [
+                        {name: '道德品质', max: 5},
+                        {name: '专业能力', max: 5},
+                        {name: '管理能力', max: 5},
+                        {name: '团队能力', max: 5},
+                        {name: '工作态度', max: 5},
+                        {name: '工作绩效', max: 5}
+                    ]
+                },
+                series:
+                    [{
+                        name: '评分情况',
+                        color: '#3398DB',
+                        type: 'radar',
+                        areaStyle: {
+                            normal: {
+                                opacity:0.2,
+                                color: '#3398DB'
+                            }
+
+                        },
+                        data: [
+                            {
+                                value: code,
+                                name: '评分情况'
+                            }
+                        ]
+                    }]
+            };
+            myChart.setOption(option);
+        }
+
+    </script>
+{% endblock page_body %}
+
+
